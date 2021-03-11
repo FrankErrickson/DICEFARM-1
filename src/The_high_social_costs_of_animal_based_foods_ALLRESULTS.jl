@@ -2,8 +2,8 @@ using CSV, DataFrames, Plots, Roots
 
 directory = dirname(pwd())
 data_directory = joinpath(directory, "data")
-subroutine_directory = joinpath(directory, "src//SubRoutines_EKM")
-output_directory = joinpath(directory, "Results", "EKM")
+subroutine_directory = joinpath(directory, "src/SubRoutines_EKM")
+output_directory = joinpath(directory, "Results", "EKM_LFR")
 mkpath(output_directory)
 
 include("DICEFARM.jl")
@@ -19,7 +19,8 @@ BaseTemp = DICEFARM[:co2_cycle, :T]
 BaseWelfare = DICEFARM[:welfare, :UTILITY]
 DICELength = length(DICEFARM[:farm, :Beef])
 pop 		= DICEFARM[:welfare, :l]
-TwentyTwenty = 2020-1764
+TwentyFifteen = findfirst(x->x == 2015, 1765:2500)
+TwentyTwenty = findfirst(x->x == 2020, 1765:2500)
 BaseCons  = DICEFARM[:neteconomy, :C][TwentyTwenty:end]
 
 # ----- Plot against Vegan World: Figure 1A ------ #
@@ -31,12 +32,12 @@ OrigEggs = DICEFARM[:farm, :Eggs]
 OrigSheepGoat = DICEFARM[:farm, :SheepGoat]
 
 VeganDICE = create_dice_farm()
-update_param!(VeganDICE, :Beef, [OrigBeef[1:5]; zeros(DICELength-5)])  			#Keep 2015-2019 consumption
-update_param!(VeganDICE, :Dairy, [OrigDairy[1:5]; zeros(DICELength-5)])
-update_param!(VeganDICE, :Poultry, [OrigPoultry[1:5]; zeros(DICELength-5)])
-update_param!(VeganDICE, :Pork, [OrigPork[1:5]; zeros(DICELength-5)])
-update_param!(VeganDICE, :Eggs, [OrigEggs[1:5]; zeros(DICELength-5)])
-update_param!(VeganDICE, :SheepGoat, [OrigSheepGoat[1:5]; zeros(DICELength-5)])
+update_param!(VeganDICE, :Beef, [zeros(TwentyFifteen-1)..., OrigBeef[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])  			#Keep 2015-2019 consumption
+update_param!(VeganDICE, :Dairy, [zeros(TwentyFifteen-1)..., OrigDairy[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])
+update_param!(VeganDICE, :Poultry, [zeros(TwentyFifteen-1)..., OrigPoultry[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])
+update_param!(VeganDICE, :Pork, [zeros(TwentyFifteen-1)..., OrigPork[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])
+update_param!(VeganDICE, :Eggs, [zeros(TwentyFifteen-1)..., OrigEggs[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])
+update_param!(VeganDICE, :SheepGoat, [zeros(TwentyFifteen-1)..., OrigSheepGoat[TwentyFifteen:TwentyTwenty-1]..., zeros(DICELength-TwentyTwenty+1)...])
 run(VeganDICE)
 VeganTemp = VeganDICE[:co2_cycle, :T]
 plotT = 2120
@@ -59,12 +60,12 @@ EggsPulse = copy(OrigEggs)
 SheepGoatPulse = copy(OrigSheepGoat)
 
 #USA Average Diets 2013
-BeefPulse[6] = OrigBeef[6] + 1000*(4.5) 				
-DairyPulse[6] = OrigDairy[6] + 1000*(8)
-PoultryPulse[6] = OrigPoultry[6] + 1000*(6.5)
-PorkPulse[6] = OrigPork[6]  + 1000*(2.7)
-EggsPulse[6] = OrigEggs[6]  + 1000*(1.6)
-SheepGoatPulse[6] = OrigSheepGoat[6] + 1000*(.06)
+BeefPulse[TwentyTwenty] = OrigBeef[TwentyTwenty] + 1000*(4.5) 				
+DairyPulse[TwentyTwenty] = OrigDairy[TwentyTwenty] + 1000*(8)
+PoultryPulse[TwentyTwenty] = OrigPoultry[TwentyTwenty] + 1000*(6.5)
+PorkPulse[TwentyTwenty] = OrigPork[TwentyTwenty]  + 1000*(2.7)
+EggsPulse[TwentyTwenty] = OrigEggs[TwentyTwenty]  + 1000*(1.6)
+SheepGoatPulse[TwentyTwenty] = OrigSheepGoat[TwentyTwenty] + 1000*(.06)
 
 #Model With Vegan Pulse
 VeganPulse = create_dice_farm()
@@ -82,7 +83,7 @@ GasPulse = create_dice_farm()
 T = DICELength
 pulse = 1000*4.6*1e-9
 #From: https://www.epa.gov/energy/greenhouse-gases-equivalencies-calculator-calculations-and-references
-set_param!(GasPulse, :emissions, :Co2Pulse, pulse)
+update_param!(GasPulse, :Co2Pulse, pulse)
 run(GasPulse)
 GasIRF = (GasPulse[:co2_cycle, :T] - BaseTemp)/1000
 HHEnergyPulse = create_dice_farm()
@@ -109,12 +110,12 @@ GlobalPoultryPulse = copy(OrigPoultry)
 GlobalEggsPulse = copy(OrigEggs)
 GlobalSheepGoatPulse = copy(OrigSheepGoat)
 
-GlobalBeefPulse[6] = 0
-GlobalDairyPulse[6] = 0
-GlobalPorkPulse[6] = 0
-GlobalPoultryPulse[6] = 0
-GlobalEggsPulse[6] = 0
-GlobalSheepGoatPulse[6] = 0
+GlobalBeefPulse[TwentyTwenty] = 0
+GlobalDairyPulse[TwentyTwenty] = 0
+GlobalPorkPulse[TwentyTwenty] = 0
+GlobalPoultryPulse[TwentyTwenty] = 0
+GlobalEggsPulse[TwentyTwenty] = 0
+GlobalSheepGoatPulse[TwentyTwenty] = 0
 
 update_param!(GlobalVeganPulse, :Beef, GlobalBeefPulse)
 update_param!(GlobalVeganPulse, :Dairy, GlobalDairyPulse)

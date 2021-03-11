@@ -1,4 +1,5 @@
 function VegSocialCosts_EPA(Diets, Intensities, discounts)
+	TwentyTwenty = findfirst(x->x == 2020, 1765:2500)
 	DICEFARM = create_dice_farm()
 	update_intensities(DICEFARM, Intensities)
 	run(DICEFARM)
@@ -23,12 +24,12 @@ function VegSocialCosts_EPA(Diets, Intensities, discounts)
 	EggsPulse = copy(OrigEggs)
 	SheepGoatPulse = copy(OrigSheepGoat)
 
-	BeefPulse[6] = OrigBeef[6] + 100000*(Diets[1]) 				
-	DairyPulse[6] = OrigDairy[6] + 100000*(Diets[2])
-	PoultryPulse[6] = OrigPoultry[6] + 100000*(Diets[3])
-	PorkPulse[6] = OrigPork[6]  + 100000*(Diets[4])
-	EggsPulse[6] = OrigEggs[6]  + 100000*(Diets[5])
-	SheepGoatPulse[6] = OrigSheepGoat[6] + 100000*(Diets[6])
+	BeefPulse[TwentyTwenty] = OrigBeef[TwentyTwenty] + 100000*(Diets[1]) 				
+	DairyPulse[TwentyTwenty] = OrigDairy[TwentyTwenty] + 100000*(Diets[2])
+	PoultryPulse[TwentyTwenty] = OrigPoultry[TwentyTwenty] + 100000*(Diets[3])
+	PorkPulse[TwentyTwenty] = OrigPork[TwentyTwenty]  + 100000*(Diets[4])
+	EggsPulse[TwentyTwenty] = OrigEggs[TwentyTwenty]  + 100000*(Diets[5])
+	SheepGoatPulse[TwentyTwenty] = OrigSheepGoat[TwentyTwenty] + 100000*(Diets[6])
 
 	VeganPulse = create_dice_farm()
 	update_intensities(VeganPulse, Intensities)
@@ -51,10 +52,10 @@ function VegSocialCosts_EPA(Diets, Intensities, discounts)
 	PorkPulse = copy(OrigPork)
 	SheepGoatPulse = copy(OrigSheepGoat)
 
-	BeefPulse[6] = OrigBeef[6] + 100000*(Diets[1]) 				#Add pulse to year 2020
-	PoultryPulse[6] = OrigPoultry[6] + 100000*(Diets[3])
-	PorkPulse[6] = OrigPork[6]  + 100000*(Diets[4])
-	SheepGoatPulse[6] = OrigSheepGoat[6] + 100000*(Diets[6])
+	BeefPulse[TwentyTwenty] = OrigBeef[TwentyTwenty] + 100000*(Diets[1]) 				#Add pulse to year 2020
+	PoultryPulse[TwentyTwenty] = OrigPoultry[TwentyTwenty] + 100000*(Diets[3])
+	PorkPulse[TwentyTwenty] = OrigPork[TwentyTwenty]  + 100000*(Diets[4])
+	SheepGoatPulse[TwentyTwenty] = OrigSheepGoat[TwentyTwenty] + 100000*(Diets[6])
 
 	VegetarianPulse = create_dice_farm()
 	update_intensities(VegetarianPulse, Intensities)
@@ -77,7 +78,7 @@ function VegSocialCosts_EPA(Diets, Intensities, discounts)
 		tempModel = create_dice_farm();
 		update_intensities(tempModel, Intensities)
 		Pulse = copy(O)
-		Pulse[6] = Pulse[6] + 2000.0 #add 2000 kg of protein (or 2000000 grams)
+		Pulse[TwentyTwenty] = Pulse[TwentyTwenty] + 2000.0 #add 2000 kg of protein (or 2000000 grams)
 		update_param!(tempModel, meat, Pulse)
 		run(tempModel)
 		tempCons = 1e12*tempModel[:neteconomy, :C][TwentyTwenty:end]
