@@ -1,21 +1,23 @@
 @defcomp grosseconomy begin
-    K       = Variable(index=[time])    #Capital stock (trillions 2010 US dollars)
-    YGROSS  = Variable(index=[time])    #Gross world product GROSS of abatement and damages (trillions 2010 USD per year)
 
-    AL      = Parameter(index=[time])   #Level of total factor productivity
-    I       = Parameter(index=[time])   #Investment (trillions 2010 USD per year)
-    l       = Parameter(index=[time])   #Level of population and labor
-    dk      = Parameter()               #Depreciation rate on capital (per year)
-    gama    = Parameter()               #Capital elasticity in production function
-    k0      = Parameter()               #Initial capital value (trill 2010 USD)
+    dk      = Parameter()             # Depreciation rate on capital (per year)
+    gama    = Parameter()             # Capital elasticity in production function
+    k0      = Parameter()             # Initial capital value (trill 2010 USD)
+    AL      = Parameter(index=[time]) # Level of total factor productivity
+    I       = Parameter(index=[time]) # Investment (trillions 2010 USD per year)
+    l       = Parameter(index=[time]) # Level of population and labor
+
+    K       = Variable(index=[time])  # Capital stock (trillions 2010 US dollars)
+    YGROSS  = Variable(index=[time])  # Gross world product GROSS of abatement and damages (trillions 2010 USD per year)
+
 
     function run_timestep(p, v, d, t)
-		
+
         #Define function for K
         if is_first(t)
             v.K[t] = p.k0
         else
-            v.K[t] = (1 - p.dk) * v.K[t-1] + p.I[t-1]		#dropped 5th power on depreciation & dropped 5*I
+            v.K[t] = (1 - p.dk) * v.K[t-1] + p.I[t-1]
         end
 
         #Define function for YGROSS
