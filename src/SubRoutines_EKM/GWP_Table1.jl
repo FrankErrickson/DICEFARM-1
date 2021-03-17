@@ -1,5 +1,4 @@
 # Add a check for which SCC to use (EPA IAWG SCC :EPA or Nordhaus PNAS estimate :Nordhaus)
-# TODO = Are they both expressed in same units (Year X US dollars?)
 scc_version = :Nordhaus
 
 # 20, 100, and 500 year GWPs
