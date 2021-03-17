@@ -3,7 +3,7 @@ using CSV, DataFrames, Plots, Roots, StatsPlots
 directory = dirname(pwd())
 data_directory = joinpath(directory, "data")
 subroutine_directory = joinpath(directory, "src//SubRoutines_EKM")
-output_directory = joinpath(directory, "Results", "EKM")
+output_directory = joinpath(directory, "Results")
 mkpath(output_directory)
 
 include("DICEFARM.jl")
